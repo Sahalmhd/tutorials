@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserAddress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use PhpParser\Node\Stmt\Return_;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        $users = User::withTrashed()->get();
+        $users = User::withTrashed()->paginate(10);
         return view('home', compact('users'));
     }
 
@@ -38,7 +40,11 @@ class HomeController extends Controller
         $user = User::find(decrypt($id));
         return view('Users.edit', compact('user'));
     }
-
+    public function view($id)
+    {
+        $user = User::find(decrypt($id));
+        return view('Users.view', compact('user'));
+    }   
     public function update(Request $request)
     {
         $user = User::find(decrypt($request->id));
