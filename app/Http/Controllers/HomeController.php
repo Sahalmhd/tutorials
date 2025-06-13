@@ -23,6 +23,14 @@ class HomeController extends Controller
 
     public function save(Request $request)
     {
+        $validated = $request ->validate(
+            [
+                'name'=>'required|max:255',
+                'email'=>'required|unique:users|max:255',
+                'password'=>'required'
+
+            ]
+            );
 
         $user = new User();
         $user->name = $request->name;
@@ -32,7 +40,7 @@ class HomeController extends Controller
 
 
 
-        return redirect()->route('index')->with('message', 'user Created successfully');
+        return redirect()->route('home')->with('message', 'user Created successfully');
     }
 
     public function edit($id)
