@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewUserCreateEvent;
+use App\Mail\UserCreatedMail;
 use App\Models\User;
 use App\Models\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use PhpParser\Node\Stmt\Return_;
 
 class HomeController extends Controller
@@ -23,14 +26,14 @@ class HomeController extends Controller
 
     public function save(Request $request)
     {
-        $validated = $request ->validate(
+        $validated = $request->validate(
             [
-                'name'=>'required|max:255',
-                'email'=>'required|unique:users|max:255',
-                'password'=>'required'
+                'name' => 'required|max:255',
+                'email' => 'required|unique:users|max:255',
+                'password' => 'required'
 
             ]
-            );
+        );
 
         $user = new User();
         $user->name = $request->name;
@@ -38,9 +41,10 @@ class HomeController extends Controller
         $user->password = $request->password;
         $user->save();
 
+        NewUserCreateEvent::dispatch($user);
+        return "event fired successfully";
 
-
-        return redirect()->route('home')->with('message', 'user Created successfully');
+        // return redirect()->route('home')->with('message', 'user Created successfully');
     }
 
     public function edit($id)
@@ -52,7 +56,7 @@ class HomeController extends Controller
     {
         $user = User::find(decrypt($id));
         return view('Users.view', compact('user'));
-    }   
+    }
     public function update(Request $request)
     {
         $user = User::find(decrypt($request->id));
@@ -78,5 +82,9 @@ class HomeController extends Controller
         $user =  User::withTrashed()->find(decrypt($id))->restore();
 
         return redirect()->route('index')->with('message', 'user Activated success');
+    }
+
+    public function admin(){
+        return view('admin');
     }
 }

@@ -2,8 +2,11 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\AuthCheck;
+use Illuminate\Routing\Route as RoutingRoute;
+
 Route::get('/',[LoginController::class,'loginPage'])->name('login-page');
 Route::post('login',[LoginController::class,'login'])->name('login');
 Route::get('logout',[LoginController::class,'Logout'])->name('logout');
@@ -21,4 +24,6 @@ Route::get('view/{id}',[HomeController::class,'view'])->name('view');
 Route::get('delete/{id}',[HomeController::class,'delete'])->name('delete');
 Route::get('activate/{id}',[HomeController::class,'activate'])->name('activate');
 });
+
+Route::get('admin',[HomeController::class,'admin'])->name('admin');
 
